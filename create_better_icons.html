@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Generate Extension Icons</title>
+</head>
+<body>
+  <h2>Generating Icons...</h2>
+  <canvas id="canvas"></canvas>
+  
+  <script>
+    // Function to create icon at different sizes
+    function createIcon(size) {
+      const canvas = document.getElementById('canvas');
+      canvas.width = size;
+      canvas.height = size;
+      const ctx = canvas.getContext('2d');
+      
+      // Clear canvas
+      ctx.clearRect(0, 0, size, size);
+      
+      // Create gradient background
+      const gradient = ctx.createLinearGradient(0, 0, size, size);
+      gradient.addColorStop(0, '#667eea');
+      gradient.addColorStop(1, '#764ba2');
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, size, size);
+      
+      // Draw white chat bubble
+      const bubbleMargin = size * 0.2;
+      const bubbleWidth = size * 0.6;
+      const bubbleHeight = size * 0.5;
+      const bubbleRadius = size * 0.1;
+      const bubbleX = bubbleMargin;
+      const bubbleY = bubbleMargin;
+      
+      ctx.fillStyle = 'white';
+      ctx.beginPath();
+      ctx.roundRect(bubbleX, bubbleY, bubbleWidth, bubbleHeight, bubbleRadius);
+      ctx.fill();
+      
+      // Draw bubble tail (speech bubble style)
+      ctx.beginPath();
+      ctx.moveTo(bubbleX + bubbleWidth * 0.3, bubbleY + bubbleHeight);
+      ctx.lineTo(bubbleX + bubbleWidth * 0.15, bubbleY + bubbleHeight + size * 0.15);
+      ctx.lineTo(bubbleX + bubbleWidth * 0.5, bubbleY + bubbleHeight);
+      ctx.closePath();
+      ctx.fill();
+      
+      // Draw "AI" text in the bubble
+      if (size >= 48) {
+        ctx.fillStyle = '#667eea';
+        ctx.font = `bold ${size * 0.25}px Arial, sans-serif`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText('AI', bubbleX + bubbleWidth / 2, bubbleY + bubbleHeight / 2);
+      } else {
+        // For small icon, just draw dots
+        ctx.fillStyle = '#667eea';
+        const dotRadius = size * 0.03;
+        const dotY = bubbleY + bubbleHeight / 2;
+        for (let i = 0; i < 3; i++) {
+          const dotX = bubbleX + bubbleWidth * (0.3 + i * 0.2);
+          ctx.beginPath();
+          ctx.arc(dotX, dotY, dotRadius, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+      
+      // Download the icon
+      return canvas.toDataURL('image/png');
+    }
+    
+    // Generate icons
+    const sizes = [16, 48, 128];
+    const iconData = {};
+    
+    sizes.forEach(size => {
+      iconData[size] = createIcon(size);
+    });
+    
+    // Display download links
+    document.body.innerHTML += '<h3>Right-click and save these icons:</h3>';
+    sizes.forEach(size => {
+      const link = document.createElement('a');
+      link.href = iconData[size];
+      link.download = `icon${size}.png`;
+      link.textContent = `Download icon${size}.png`;
+      link.style.display = 'block';
+      link.style.margin = '10px';
+      document.body.appendChild(link);
+      
+      const img = document.createElement('img');
+      img.src = iconData[size];
+      img.style.border = '1px solid #ccc';
+      img.style.margin = '10px';
+      document.body.appendChild(img);
+    });
+    
+    console.log('Icons generated successfully!');
+  </script>
+</body>
+</html>
+
